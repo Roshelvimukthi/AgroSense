@@ -10,7 +10,7 @@ def model_prediction(test_image):
     return np.argmax(predictions) #return index of max element
 
 #Sidebar
-st.sidebar.title("AgriSens")
+st.sidebar.title("AgroSense")
 app_mode = st.sidebar.selectbox("Select Page",["HOME","DISEASE RECOGNITION"])
 #app_mode = st.sidebar.selectbox("Select Page",["Home","About","Disease Recognition"])
 
@@ -52,4 +52,5 @@ elif(app_mode=="DISEASE RECOGNITION"):
                     'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite', 
                     'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
                       'Tomato___healthy']
+
         st.success("Model is Predicting it's a {}".format(class_name[result_index]))
