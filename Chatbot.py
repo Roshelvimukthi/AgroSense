@@ -1,57 +1,74 @@
 import streamlit as st
-from deep_translator import GoogleTranslator
+from googletrans import Translator
+
+translator = Translator()
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Translate any language to English
-def translate_to_english(text):
+# Translate text
+def translate(text, dest):
     try:
-        translated = GoogleTranslator(source='auto', target='en').translate(text)
-        return translated.lower()
+        return translator.translate(text, dest=dest).text
     except:
-        return text.lower()
+        return text
 
-# Farm cultivation chatbot
+# Detect language
+def detect_language(text):
+    try:
+        return translator.detect(text).lang
+    except:
+        return "en"
+
+# Farm chatbot knowledge
 def farm_chatbot(user_input):
 
-    user_input = translate_to_english(user_input)
-
     if "tea" in user_input:
-        return "Tea requires acidic soil, regular rainfall, and partial sunlight. Fertilize with nitrogen-rich compost."
+        return "Tea requires acidic soil, regular rainfall, and partial sunlight. Use nitrogen-rich fertilizer."
 
     elif "rice" in user_input:
-        return "Rice grows well in flooded fields. Ensure proper water management and use organic manure."
+        return "Rice grows best in flooded fields. Maintain good water management and apply organic manure."
 
     elif "fertilizer" in user_input:
-        return "For vegetables, use compost or balanced NPK fertilizers. Avoid overuse to prevent soil damage."
+        return "Use compost or balanced NPK fertilizer for vegetables."
 
     elif "pest" in user_input or "disease" in user_input:
-        return "Common pests include aphids and caterpillars. Use neem oil or organic pesticides. Crop rotation helps prevent disease."
+        return "Use neem oil or organic pesticides to control pests."
 
-    elif "watering" in user_input:
-        return "Most crops need consistent watering. Avoid waterlogging. Drip irrigation is efficient for vegetable farms."
+    elif "water" in user_input:
+        return "Most crops need regular watering. Avoid waterlogging."
 
     elif "hello" in user_input or "hi" in user_input:
-        return "Hello! I can guide you on crop cultivation, fertilizers, pests, and watering. How can I help?"
+        return "Hello! Ask me about crop cultivation, fertilizers, pests, or watering."
 
     elif "bye" in user_input:
         return "Goodbye! Happy farming!"
 
     else:
-        return "Sorry, I can only answer questions related to crop cultivation, pests, fertilizers, and watering."
-
+        return "Sorry, I can only answer farming related questions."
 
 # Streamlit UI
-st.title("🌾 Multilingual Farm Cultivation Chatbot")
+st.title("🌾 AgroSense Multilingual Farm Chatbot")
 
 user_input = st.text_input("Ask your farming question (Sinhala / Tamil / English):")
 
 if user_input:
-    response = farm_chatbot(user_input)
+
+    # Detect language
+    lang = detect_language(user_input)
+
+    # Translate to English for processing
+    english_input = translate(user_input, "en").lower()
+
+    # Get chatbot response
+    response = farm_chatbot(english_input)
+
+    # Translate response back to user's language
+    final_response = translate(response, lang)
+
     st.session_state.messages.append(("You", user_input))
-    st.session_state.messages.append(("Bot", response))
+    st.session_state.messages.append(("Bot", final_response))
 
 # Display chat history
 for sender, message in st.session_state.messages:
