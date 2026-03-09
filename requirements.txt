@@ -9,4 +9,6 @@ tensorflow
 keras
 opencv_python_headless
 deep-translator
+googletrans
+
 
